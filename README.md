@@ -1,2 +1,3 @@
-# IdentityManager
-Example showing a management of users, roles, permissions, modules and licenses using razor pages and entity framework core
+# Identity Manager
+
+Example showing a management of users, roles, permissions, modules and licenses using .NET 8 Minimal API and Entity Framework Core
