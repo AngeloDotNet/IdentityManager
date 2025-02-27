@@ -1,3 +1,6 @@
+using MinimalApi.Identity.API.Extensions;
+using MinimalApi.Identity.API.Options;
+
 namespace IdentityManager.API;
 
 public class Program
