@@ -1,3 +1,4 @@
+using IdentityManager.API.Options;
 using MinimalApi.Identity.API.Extensions;
 using MinimalApi.Identity.API.Options;
 
@@ -9,10 +10,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         var connectionString = builder.Configuration.GetDatabaseConnString("DefaultConnection");
+        var configCors = builder.Configuration.GetSettingsOptions<CorsOptions>(nameof(CorsOptions));
 
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddCors(options => options.AddPolicy("cors", builder
-            => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+        builder.Services.AddCors(options => options.AddPolicy(configCors.NameCors, builder
+            => builder.WithOrigins(configCors.AllowedOrigins!)
+                .WithMethods(configCors.AllowedMethods!)
+                .WithHeaders(configCors.AllowedHeaders!)));
 
         var jwtOptions = builder.Configuration.GetSettingsOptions<JwtOptions>(nameof(JwtOptions));
         var identityOptions = builder.Configuration.GetSettingsOptions<NetIdentityOptions>(nameof(NetIdentityOptions));
@@ -34,10 +38,13 @@ public class Program
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger().UseSwaggerUI();
+            app.UseSwagger().UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", app.Environment.ApplicationName);
+            });
         }
 
-        app.UseCors("cors");
+        app.UseCors(configCors.NameCors);
 
         app.UseAuthentication();
         app.UseAuthorization();
