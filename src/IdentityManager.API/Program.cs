@@ -1,4 +1,3 @@
-using IdentityManager.API.Options;
 using MinimalApi.Identity.API.Extensions;
 using MinimalApi.Identity.API.Options;
 
@@ -10,13 +9,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         var connectionString = builder.Configuration.GetDatabaseConnString("DefaultConnection");
-        var configCors = builder.Configuration.GetSettingsOptions<CorsOptions>(nameof(CorsOptions));
 
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddCors(options => options.AddPolicy(configCors.NameCors, builder
-            => builder.WithOrigins(configCors.AllowedOrigins!)
-                .WithMethods(configCors.AllowedMethods!)
-                .WithHeaders(configCors.AllowedHeaders!)));
+        builder.Services.AddCors(options => options.AddPolicy("cors", builder
+            => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
         var jwtOptions = builder.Configuration.GetSettingsOptions<JwtOptions>(nameof(JwtOptions));
         var identityOptions = builder.Configuration.GetSettingsOptions<NetIdentityOptions>(nameof(NetIdentityOptions));
@@ -44,7 +40,7 @@ public class Program
             });
         }
 
-        app.UseCors(configCors.NameCors);
+        app.UseCors("cors");
 
         app.UseAuthentication();
         app.UseAuthorization();
