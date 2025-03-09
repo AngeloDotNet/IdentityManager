@@ -50,7 +50,8 @@ Adding this sections in the _appsettings.json_ file:
         "Security": "StartTls",
         "Username": "Username del server SMTP",
         "Password": "Password del server SMTP",
-        "Sender": "MyApplication <noreply@example.org>"
+        "Sender": "MyApplication <noreply@example.org>",
+        "SaveEmailSent": false 
     },
     "UsersOptions": {
         "AssignAdminRoleOnRegistration": "admin@example.org"
@@ -61,13 +62,11 @@ Adding this sections in the _appsettings.json_ file:
 }
 ```
 
-Registering services at Startup:
+Registering services at _Program.cs_ file:
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetDatabaseConnString("DefaultConnection");
-
-builder.Services.AddHttpContextAccessor();
 
 //...
 
@@ -80,7 +79,6 @@ builder.Services
     .AddAuthorization(options =>
     {
         options.AddDefaultAuthorizationPolicy(); // Adds default authorization policies
-
         // Here you can add additional authorization policies
     });
 
@@ -92,8 +90,8 @@ var app = builder.Build();
 
 //...
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 //...
 
@@ -107,7 +105,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### ⭐ Give a Star
 
-If you like or are using this project to learn or start your solution, please give it a star. Thanks!
+If you find this project useful, please give it a ⭐ on GitHub to show your support and help others discover it!
 
 ### 🤝 Contributing
 
