@@ -8,21 +8,23 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
         var connectionString = builder.Configuration.GetDatabaseConnString("DefaultConnection");
-
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddCors(options => options.AddPolicy("cors", builder
-            => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-
         var jwtOptions = builder.Configuration.GetSettingsOptions<JwtOptions>(nameof(JwtOptions));
+
         var identityOptions = builder.Configuration.GetSettingsOptions<NetIdentityOptions>(nameof(NetIdentityOptions));
         var smtpOptions = builder.Configuration.GetSettingsOptions<SmtpOptions>(nameof(SmtpOptions));
 
-        builder.Services.AddRegisterServices<Program>(connectionString, jwtOptions, identityOptions)
+        var namingCors = "cors";
+
+        builder.Services.AddCors(options => options.AddPolicy(namingCors, builder
+            => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+        builder.Services
+            .AddRegisterServices<Program>(connectionString, jwtOptions, identityOptions)
             .AddAuthorization(options =>
             {
                 options.AddDefaultAuthorizationPolicy(); // Adds default authorization policies
-
                 // Here you can add additional authorization policies
             });
 
@@ -40,7 +42,7 @@ public class Program
             });
         }
 
-        app.UseCors("cors");
+        app.UseCors(namingCors);
 
         app.UseAuthentication();
         app.UseAuthorization();
