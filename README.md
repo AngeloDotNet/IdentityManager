@@ -62,6 +62,8 @@ Adding this sections in the _appsettings.json_ file:
 }
 ```
 
+> **Note**: If SaveEmailSent is false, only emails that failed while sending will be saved, if SaveEmailSent is true, both emails that were sent successfully and emails that failed will be saved
+
 Registering services at _Program.cs_ file:
 
 ```csharp
